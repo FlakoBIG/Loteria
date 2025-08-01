@@ -184,6 +184,7 @@ header {
 .modal-cancel  { background: #6c757d; color: white; }
 
 /* Patrón de victoria */
+/* Contenedor de Patrón: que no desborde */
 .pattern-container {
   background: white;
   margin: 16px;
@@ -191,24 +192,44 @@ header {
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   text-align: center;
+  overflow-x: auto;       /* si aún así no cabe, permite scroll horizontal */
+  box-sizing: border-box;
 }
+
+/* Contenedor de Patrón: que no desborde */
+.pattern-container {
+  background: white;
+  margin: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  text-align: center;
+  overflow-x: auto;       /* si aún así no cabe, permite scroll horizontal */
+  box-sizing: border-box;
+}
+
+/* Grilla 9×3 responsive */
 .pattern-grid {
   display: grid;
-  grid-template-columns: repeat(5, 40px);
-  grid-gap: 4px;
-  justify-content: center;
-  margin: 8px 0;
+  grid-template-columns: repeat(9, 1fr); /* 9 columnas de igual ancho */
+  grid-auto-rows: 0;                     /* las filas se definirán por aspect-ratio */
+  gap: 4px;
+  width: 100%;                           /* lleva todo el ancho del contenedor */
 }
+
+/* Celdas cuadradas y fluidas */
 .pattern-cell {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #ccc;
   background: #fafafa;
+  border: 1px solid #ccc;
   cursor: pointer;
+  aspect-ratio: 1 / 1;      /* alto = ancho automáticamente */
+  width: 100%;              /* rellena la fracción de columna */
 }
 .pattern-cell.selected {
   background: #28a745;
 }
+
+/* Ajuste del botón para limpiar */
 #clearPatternBtn {
   background: #dc3545;
   color: white;
@@ -216,7 +237,9 @@ header {
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
+  margin-top: 8px;
 }
+
 
 /* Banner de footer fijo */
 .footer-banner {
