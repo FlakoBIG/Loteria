@@ -59,7 +59,7 @@ header {
 /* Contenedor de cartones */
 #cardsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
   gap: 16px;
   padding: 16px;
   margin-bottom: 80px; /* espacio para footer */
@@ -68,7 +68,7 @@ header {
 /* Cartón individual (tabla + botón) */
 .card {
   background: white;
-  border: 1px solid #ccc;   /* borde general gris */
+  border: 1px solid #ccc;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -82,36 +82,44 @@ header {
   width: 100%;
 }
 
-/* Celdas del header y del cuerpo */
-.card th,
-.card td {
-  width: 48px;
-  height: 40px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 1rem;
-  border: 1px solid #ccc;    /* borde gris claro */
-  box-sizing: border-box;
-  padding: 0;
-  background: white;
-}
 
-/* Header */
+/* Header de tabla */
 .card th {
   background: #007bff;
   color: white;
   font-weight: bold;
 }
 
-/* Input dentro de la celda */
+/* === Casillas del cartón: más anchas y centrado vertical === */
+.card th,
+.card td {
+  /* ancho aumentado para dos dígitos cómodos */
+  width: 50px;
+  min-width: 50px;
+  /* altura suficiente y centrado vertical vía line-height */
+  height: 60px;
+  line-height: 70px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  padding: 0; /* elimina padding para que line-height haga efecto */
+  background: white;
+}
+
+/* === Input dentro de la celda: ocupa todo y texto centrado === */
 .card td input {
   width: 100%;
   height: 100%;
-  border: none;          /* sin borde propio */
+  border: none;
   padding: 0;
   margin: 0;
   text-align: center;
-  font-size: 1rem;
+  /* font-size mayor para mejor lectura */
+  font-size: 1.5rem;
+  /* para que el cursor se alinee con el texto */
+  line-height: normal;
   background: transparent;
   outline: none;
   box-sizing: border-box;
@@ -122,6 +130,17 @@ header {
 .card td.marked {
   background: #ffc107;
 }
+
+/* Título del cartón */
+.card-title {
+  margin: 0;
+  padding: 12px 0;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #fff;
+  /* el color de fondo se setea dinámicamente desde JS */
+}
+
 
 /* Botón eliminar integrado */
 .remove-btn {
@@ -240,21 +259,21 @@ header {
 .card.pop-in {
   animation: popIn 0.4s ease-out forwards;
 }
-    .pattern-grid {
+.pattern-grid {
       display: grid;
       grid-template-columns: repeat(9, 60px);
       grid-template-rows: repeat(3, 60px);
       grid-gap: 4px;
       justify-content: center;
       margin: 8px 0;
-    }
-    .pattern-cell {
+}
+.pattern-cell {
       width: 60px;
       height: 60px;
       border: 1px solid #ccc;
       background: #fafafa;
       cursor: pointer;
-    }
-    .pattern-cell.selected {
+}
+.pattern-cell.selected {
       background: #28a745;
-    }
+}
