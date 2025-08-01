@@ -1,0 +1,260 @@
+/* Archivo: Assets/css/stile.css */
+
+/* Reset básico y fuente */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f0f4f8;
+}
+
+/* Header fijo */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #007bff;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+/* Barra de controles fija justo debajo del header */
+.controls {
+  position: sticky;
+  top: 60px; /* deja espacio para el header */
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* Estilos de botones e inputs en controles */
+.controls button,
+.controls input {
+  flex: 1 1 auto;
+  min-width: 60px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.controls button {
+  background: #007bff;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.controls button:disabled {
+  background: #ccc;
+}
+
+/* Contenedor de cartones */
+#cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  margin-bottom: 80px; /* espacio para footer */
+}
+
+/* Cartón individual (tabla + botón) */
+.card {
+  background: white;
+  border: 1px solid #ccc;   /* borde general gris */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tabla interna del cartón */
+.card table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Celdas del header y del cuerpo */
+.card th,
+.card td {
+  width: 48px;
+  height: 40px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1rem;
+  border: 1px solid #ccc;    /* borde gris claro */
+  box-sizing: border-box;
+  padding: 0;
+  background: white;
+}
+
+/* Header */
+.card th {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+/* Input dentro de la celda */
+.card td input {
+  width: 100%;
+  height: 100%;
+  border: none;          /* sin borde propio */
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  font-size: 1rem;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+  caret-color: #007bff;
+}
+
+/* Casillas marcadas */
+.card td.marked {
+  background: #ffc107;
+}
+
+/* Botón eliminar integrado */
+.remove-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-top: 1px solid #c82333;
+  font-size: 0.9rem;
+  padding: 8px 0;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+}
+
+/* Modales */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 280px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.modal button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.modal-confirm { background: #28a745; color: white; }
+.modal-cancel  { background: #6c757d; color: white; }
+
+/* Patrón de victoria */
+.pattern-container {
+  background: white;
+  margin: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 40px);
+  grid-gap: 4px;
+  justify-content: center;
+  margin: 8px 0;
+}
+.pattern-cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  cursor: pointer;
+}
+.pattern-cell.selected {
+  background: #28a745;
+}
+#clearPatternBtn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Banner de footer fijo */
+.footer-banner {
+  background: #007bff;
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+  font-size: 0.9rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+}
+.footer-banner p {
+  margin: 0;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Modales: usar fadeIn/fadeOut */
+.modal-backdrop.show {
+  display: flex;             /* fuerza el flex */
+  animation: fadeIn 0.3s ease-out forwards;
+}
+.modal-backdrop.hide {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+/* Bingo cards: animación al aparecer */
+.card.pop-in {
+  animation: popIn 0.4s ease-out forwards;
+}
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 60px);
+      grid-template-rows: repeat(3, 60px);
+      grid-gap: 4px;
+      justify-content: center;
+      margin: 8px 0;
+    }
+    .pattern-cell {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #ccc;
+      background: #fafafa;
+      cursor: pointer;
+    }
+    .pattern-cell.selected {
+      background: #28a745;
+    }

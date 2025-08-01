@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lotería Interactiva</title>
+  <link rel="stylesheet" href="Assets/css/stile.css">
+</head>
+<body>
+  <header>Lotería Interactiva</header>
+  <div class="controls">
+    <button id="undoBtn" disabled>↩️ Deshacer</button>
+    <button id="redoBtn" disabled>↪️ Rehacer</button>
+    <button id="addCardBtn">➕ Agregar Cartón</button>
+    <button id="resetBtn">🔄 Reiniciar</button>
+    <input type="number" id="calledNumber" placeholder="Número (1-90, 0 marca vacías)" min="0" max="90">
+    <button id="callNumberBtn">📢 Cantar</button>
+  </div>
+  <!-- Patrón de Victoria reordenado: justo debajo del header -->
+  <section class="pattern-container">
+    <h2>Define tu Patrón de Victoria</h2>
+    <div id="patternGrid" class="pattern-grid"></div>
+    <button id="clearPatternBtn">🗑️ Limpiar Patrón</button>
+  </section>
+
+
+
+  <div id="cardsContainer"></div>
+
+  <!-- Modales -->
+  <div id="modalDelete" class="modal-backdrop">
+    <div class="modal">
+      <p>¿Eliminar este cartón?</p>
+      <button id="confirmDelete" class="modal-confirm">Sí</button>
+      <button id="cancelDelete" class="modal-cancel">No</button>
+    </div>
+  </div>
+
+  <div id="modalReset" class="modal-backdrop">
+    <div class="modal">
+      <p>¿Reiniciar el juego?</p>
+      <button id="confirmReset" class="modal-confirm">Sí</button>
+      <button id="cancelReset" class="modal-cancel">No</button>
+    </div>
+  </div>
+
+  <div id="modalWin" class="modal-backdrop">
+    <div class="modal">
+      <p>¡Ganaste!</p>
+      <button id="closeWin" class="modal-confirm">Cerrar</button>
+    </div>
+  </div>
+
+  <script src="Assets/js/scrip.js" defer></script>
+  <footer class="footer-banner">
+    <p>🌟 Página creada y diseñada por <strong>SkinnyProject</strong>. © <span id="year"></span> Daylan Collado.</p>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
