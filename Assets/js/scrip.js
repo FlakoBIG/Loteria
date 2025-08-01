@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Historial de “cantos”
   let callHistory = [];
+  
   const colorMap = new Map();
   let colorPool = [...headerColors];
   // Undo/Redo
@@ -145,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inp = document.createElement('input');
         inp.type = 'number';
         inp.min = '1';
-        inp.max = '90';
+        inp.max = '99';
         inp.style.width = '100%';
         inp.style.height = '100%';
         inp.style.border = 'none';
@@ -178,54 +179,68 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Función de cantar número
-  function callNumber() {
-    const num = parseInt(calledNumberInput.value, 10);
-    if (isNaN(num) || num > 90) return;
+function callNumber() {
+  const num = parseInt(calledNumberInput.value, 10);
+  if (isNaN(num) || num > 99) return;
 
-    // Historial (no incluimos el 0)
+  // asignar color si es nuevo
   if (!colorMap.has(num)) {
     const color = colorPool.length > 0 ? colorPool.pop() : getRandomColor();
     colorMap.set(num, color);
   }
 
-  callHistory.unshift({ num, color: colorMap.get(num) });
-  if (callHistory.length > 3) callHistory.pop();
+  const entry = { num, color: colorMap.get(num) };
+  callHistory.unshift(entry);
+  let removed = null;
+  if (callHistory.length > 4) {
+    removed = callHistory.pop();
+  }
 
   renderHistory();
-    // Marcar celdas
-    const markedCells = [];
-    document.querySelectorAll('.card td').forEach(td => {
-      const inp = td.querySelector('input');
-      if (num === 0) {
-        // marca vacías solo si no hay valor
-        if (!inp.value && !td.classList.contains('marked')) {
-          td.classList.add('marked');
-          markedCells.push(td);
-        }
-      } else if (inp && parseInt(inp.value, 10) === num && !td.classList.contains('marked')) {
+
+  // Marcar celdas correspondientes
+  const markedCells = [];
+  document.querySelectorAll('.card td').forEach(td => {
+    const inp = td.querySelector('input');
+    if (num === 0) {
+      if (!inp.value && !td.classList.contains('marked')) {
         td.classList.add('marked');
         markedCells.push(td);
       }
+    } else if (inp && parseInt(inp.value, 10) === num && !td.classList.contains('marked')) {
+      td.classList.add('marked');
+      markedCells.push(td);
+    }
+  });
+
+  // guardar en historial para deshacer/rehacer
+  pushHistory({
+    undo: () => {
+      callHistory.shift(); // quitar el último agregado
+      if (removed) callHistory.push(removed); // restaurar el eliminado si hubo
+      markedCells.forEach(td => td.classList.remove('marked'));
+      renderHistory();
+    },
+    redo: () => {
+      callHistory.unshift(entry);
+      if (callHistory.length > 4) callHistory.pop();
+      markedCells.forEach(td => td.classList.add('marked'));
+      renderHistory();
+    }
+  });
+
+  calledNumberInput.value = '';
+
+  // Verificar victoria
+  if (pattern.flat().some(v => v)) {
+    document.querySelectorAll('.card').forEach(card => {
+      const cells = Array.from(card.querySelectorAll('td'));
+      const wins = pattern.flat().every((sel, i) => !sel || cells[i].classList.contains('marked'));
+      if (wins) openModal(modalWin);
     });
-
-    if (markedCells.length) {
-      pushHistory({
-        undo: () => markedCells.forEach(td => td.classList.remove('marked')),
-        redo: () => markedCells.forEach(td => td.classList.add('marked'))
-      });
-    }
-
-    calledNumberInput.value = '';
-
-    // Comprobar victoria
-    if (pattern.flat().some(v => v)) {
-      document.querySelectorAll('.card').forEach(card => {
-        const cells = Array.from(card.querySelectorAll('td'));
-        const wins = pattern.flat().every((sel, i) => !sel || cells[i].classList.contains('marked'));
-        if (wins) openModal(modalWin);
-      });
-    }
   }
+}
+
 
   // Cerrar modal de victoria
   closeWinBtn.onclick = () => closeModal(modalWin);
