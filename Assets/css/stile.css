@@ -300,3 +300,56 @@ header {
 .pattern-cell.selected {
       background: #28a745;
 }
+
+.call-history {
+  text-align: center;
+  padding: 8px 0;
+  background: #fff;
+  font-size: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+.history-container {
+  margin: 16px auto;
+  padding: 10px;
+  text-align: center;
+}
+
+.history-list {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  transition: all 0.3s ease;
+}
+
+.history-ball {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: scale(0.8) translateY(-10px);
+  animation: appear 0.3s forwards;
+}
+
+/* Animación de aparición */
+@keyframes appear {
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Animación de salida opcional (si quieres eliminar con animación) */
+@keyframes disappear {
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+}

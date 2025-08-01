@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Elementos del DOM
   const cardsContainer    = document.getElementById('cardsContainer');
   const addCardBtn        = document.getElementById('addCardBtn');
   const resetBtn          = document.getElementById('resetBtn');
@@ -6,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const redoBtn           = document.getElementById('redoBtn');
   const callNumberBtn     = document.getElementById('callNumberBtn');
   const calledNumberInput = document.getElementById('calledNumber');
+  const historyListEl     = document.getElementById('historyList');
 
   const modalDelete       = document.getElementById('modalDelete');
   const confirmDeleteBtn  = document.getElementById('confirmDelete');
@@ -21,12 +23,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const patternGrid       = document.getElementById('patternGrid');
   const clearPatternBtn   = document.getElementById('clearPatternBtn');
 
+  // Colores de títulos
   const headerColors      = ['#e57373','#81c784','#64b5f6','#ffb74d','#ba68c8','#4db6ac','#ffd54f','#aed581','#4fc3f7','#7986cb'];
   let availableColors     = [...headerColors];
+
+  // Historial de “cantos”
+  let callHistory = [];
+  const colorMap = new Map();
+  let colorPool = [...headerColors];
+  // Undo/Redo
   let history = [], future = [], cardToDelete = null;
-  // Patrón: 3 filas × 9 columnas
+
+  // Patrón de victoria: 3 × 9
   let pattern = Array.from({ length: 3 }, () => Array(9).fill(false));
 
+  function getRandomColor() {
+    const letters = '789ABCD';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * letters.length)];
+    }
+    return color;
+  }
+
+
+  // Actualiza títulos “Cartón X”
   function updateCardTitles() {
     Array.from(cardsContainer.children).forEach((card, i) => {
       const title = card.querySelector('.card-title');
@@ -34,6 +55,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Renderiza historial en pantalla
+  function renderHistory() {
+    historyListEl.innerHTML = '';
+
+    if (callHistory.length === 0) {
+      historyListEl.textContent = '—';
+      return;
+    }
+
+    callHistory.forEach(({ num, color }) => {
+      const ball = document.createElement('div');
+      ball.className = 'history-ball';
+      ball.style.backgroundColor = color;
+      ball.textContent = num;
+      historyListEl.appendChild(ball);
+    });
+  }
+
+  // Undo/redo buttons
   function updateUndoRedo() {
     undoBtn.disabled = history.length === 0;
     redoBtn.disabled = future.length === 0;
@@ -45,54 +85,62 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUndoRedo();
   }
 
+  // Modales
   function openModal(modalEl) {
     modalEl.style.display = 'flex';
     modalEl.classList.add('show');
   }
-
   function closeModal(modalEl) {
     modalEl.classList.remove('show');
     modalEl.style.display = 'none';
   }
 
-  // Renderiza Patrón de Victoria
+  // Patrón de Victory
   function renderPattern() {
     patternGrid.innerHTML = '';
     for (let r = 0; r < 3; r++) {
       for (let c = 0; c < 9; c++) {
         const cell = document.createElement('div');
         cell.className = 'pattern-cell' + (pattern[r][c] ? ' selected' : '');
-        cell.onclick = () => { pattern[r][c] = !pattern[r][c]; renderPattern(); };
+        cell.onclick = () => {
+          pattern[r][c] = !pattern[r][c];
+          renderPattern();
+        };
         patternGrid.appendChild(cell);
       }
     }
   }
-  clearPatternBtn.onclick = () => { pattern = pattern.map(row => row.map(() => false)); renderPattern(); };
+  clearPatternBtn.onclick = () => {
+    pattern = pattern.map(row => row.map(() => false));
+    renderPattern();
+  };
 
-  // Crear cartón 3×9 con inputs editables
+  // Crear un nuevo cartón
   function createCard() {
-    if (availableColors.length === 0) availableColors = [...headerColors];
+    if (!availableColors.length) availableColors = [...headerColors];
     const bgColor = availableColors.splice(Math.random() * availableColors.length | 0, 1)[0];
 
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card pop-in';
 
+    // Título
     const title = document.createElement('h3');
     title.className = 'card-title';
     title.style.background = bgColor;
     title.style.color = '#fff';
     title.style.textAlign = 'center';
     title.style.margin = '0';
-    title.style.padding = '8px 0';
+    title.style.padding = '12px 0';
     cardDiv.appendChild(title);
 
+    // Tabla 3×9 con inputs
     const table = document.createElement('table');
     for (let r = 0; r < 3; r++) {
       const tr = document.createElement('tr');
       for (let c = 0; c < 9; c++) {
         const td = document.createElement('td');
-        // Celdas más anchas
-        td.style.width = '80px';
+        td.style.width = '120px';
+        td.style.height = '70px';
 
         const inp = document.createElement('input');
         inp.type = 'number';
@@ -102,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inp.style.height = '100%';
         inp.style.border = 'none';
         inp.style.textAlign = 'center';
-        inp.style.fontSize = '1.2rem';
+        inp.style.fontSize = '1.5rem';
 
         td.appendChild(inp);
         tr.appendChild(td);
@@ -111,13 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     cardDiv.appendChild(table);
 
+    // Botón eliminar
     const removeBtn = document.createElement('button');
     removeBtn.textContent = 'Eliminar';
     removeBtn.className = 'remove-btn';
-    removeBtn.onclick = () => { cardToDelete = cardDiv; openModal(modalDelete); };
+    removeBtn.onclick = () => {
+      cardToDelete = cardDiv;
+      openModal(modalDelete);
+    };
     cardDiv.appendChild(removeBtn);
-    cardsContainer.appendChild(cardDiv);
 
+    cardsContainer.appendChild(cardDiv);
     pushHistory({
       undo: () => { cardDiv.remove(); updateCardTitles(); },
       redo: () => { cardsContainer.appendChild(cardDiv); updateCardTitles(); }
@@ -125,16 +177,27 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCardTitles();
   }
 
+  // Función de cantar número
   function callNumber() {
     const num = parseInt(calledNumberInput.value, 10);
-    // Permite 0 para marcar celdas vacías
     if (isNaN(num) || num > 90) return;
 
+    // Historial (no incluimos el 0)
+  if (!colorMap.has(num)) {
+    const color = colorPool.length > 0 ? colorPool.pop() : getRandomColor();
+    colorMap.set(num, color);
+  }
+
+  callHistory.unshift({ num, color: colorMap.get(num) });
+  if (callHistory.length > 3) callHistory.pop();
+
+  renderHistory();
+    // Marcar celdas
     const markedCells = [];
     document.querySelectorAll('.card td').forEach(td => {
       const inp = td.querySelector('input');
       if (num === 0) {
-        // Marca celdas vacías
+        // marca vacías solo si no hay valor
         if (!inp.value && !td.classList.contains('marked')) {
           td.classList.add('marked');
           markedCells.push(td);
@@ -151,9 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
         redo: () => markedCells.forEach(td => td.classList.add('marked'))
       });
     }
+
     calledNumberInput.value = '';
 
-    // Comprueba victoria según patrón
+    // Comprobar victoria
     if (pattern.flat().some(v => v)) {
       document.querySelectorAll('.card').forEach(card => {
         const cells = Array.from(card.querySelectorAll('td'));
@@ -163,9 +227,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Cerrar modal de victoria
   closeWinBtn.onclick = () => closeModal(modalWin);
 
-  // Reset y Delete
+  // Reset
   resetBtn.onclick = () => openModal(modalReset);
   confirmResetBtn.onclick = () => {
     const marked = Array.from(document.querySelectorAll('.card td.marked'));
@@ -174,10 +239,14 @@ document.addEventListener('DOMContentLoaded', () => {
       undo: () => marked.forEach(td => td.classList.add('marked')),
       redo: () => marked.forEach(td => td.classList.remove('marked'))
     });
+    // Limpiar historial también
+    callHistory = [];
+    renderHistory();
     closeModal(modalReset);
   };
   cancelResetBtn.onclick = () => closeModal(modalReset);
 
+  // Delete
   confirmDeleteBtn.onclick = () => {
     const parent = cardToDelete.parentNode;
     const idx = [...parent.children].indexOf(cardToDelete);
@@ -191,13 +260,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   cancelDeleteBtn.onclick = () => closeModal(modalDelete);
 
-  // Undo/Redo
-  undoBtn.onclick = () => { const action = history.pop(); if (action) action.undo(); future.push(action); updateUndoRedo(); };
-  redoBtn.onclick = () => { const action = future.pop(); if (action) action.redo(); history.push(action); updateUndoRedo(); };
+  // Deshacer/Rehacer
+  undoBtn.onclick = () => { const a = history.pop(); if (a) a.undo(); future.push(a); updateUndoRedo(); };
+  redoBtn.onclick = () => { const a = future.pop(); if (a) a.redo(); history.push(a); updateUndoRedo(); };
 
   // Inicialización
   renderPattern();
-  addCardBtn.onclick = createCard;
+  renderHistory();
+  addCardBtn.onclick    = createCard;
   callNumberBtn.onclick = callNumber;
   updateUndoRedo();
 });
