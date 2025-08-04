@@ -183,39 +183,8 @@ header {
 .modal-confirm { background: #28a745; color: white; }
 .modal-cancel  { background: #6c757d; color: white; }
 
-/* Patrón de victoria */
-/* Contenedor de Patrón: que no desborde */
-.pattern-container {
-  background: white;
-  margin: 16px;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  text-align: center;
-  overflow-x: auto;       /* si aún así no cabe, permite scroll horizontal */
-  box-sizing: border-box;
-}
 
-/* Contenedor de Patrón: que no desborde */
-.pattern-container {
-  background: white;
-  margin: 16px;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  text-align: center;
-  overflow-x: auto;       /* si aún así no cabe, permite scroll horizontal */
-  box-sizing: border-box;
-}
 
-/* Grilla 9×3 responsive */
-.pattern-grid {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr); /* 9 columnas de igual ancho */
-  grid-auto-rows: 0;                     /* las filas se definirán por aspect-ratio */
-  gap: 4px;
-  width: 100%;                           /* lleva todo el ancho del contenedor */
-}
 
 /* Celdas cuadradas y fluidas */
 .pattern-cell {
@@ -352,4 +321,58 @@ header {
     opacity: 0;
     transform: scale(0.8) translateY(10px);
   }
+}
+
+.pattern-container {
+  background: white;
+  /* márgenes verticales de 16px, horizontales automáticos para centrar */
+  margin: 16px auto;
+  /* padding interno, con más espacio horizontal para “respirar” */
+  padding: 12px 8px;
+  /* obliga a que nunca sobrepase el 100% del viewport */
+  max-width: calc(100% - 16px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  text-align: center;
+  box-sizing: border-box;
+  height: 80%;
+}
+
+/* Título */
+.pattern-container h2 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+
+/* Grilla responsive 9×3 centrada */
+.pattern-grid {
+  display: grid;
+  width: 75%;                     /* ocupa el 80% del ancho del contenedor */
+  margin: 0 auto;                 /* centra la grilla */
+  grid-template-columns: repeat(9, 1fr);
+  grid-auto-rows: 0;              /* las filas las fija el aspect-ratio */
+  gap: 4px;
+}
+
+/* Cada celda es cuadrada, escala con el ancho */
+.pattern-cell {
+  background: #fafafa;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  width: 100%;                /* rellena la columna */
+  aspect-ratio: 1 / 1;        /* alto = ancho */
+  transition: background 0.2s;
+}
+.pattern-cell.selected {
+  background: #28a745;
+}
+
+/* Botón de limpiar */
+#clearPatternBtn {
+  margin-top: 8px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }
